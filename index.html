@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Game Hub</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: white;
+      background:
+        radial-gradient(circle at 20% 20%, #4c1d95 0%, transparent 30%),
+        radial-gradient(circle at 80% 30%, #075985 0%, transparent 30%),
+        radial-gradient(circle at 50% 90%, #14532d 0%, transparent 35%),
+        #050816;
+      overflow-x: hidden;
+    }
+
+    /* Background decoration */
+    body::before {
+      content: "";
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      background: rgba(124, 58, 237, 0.18);
+      filter: blur(100px);
+      border-radius: 50%;
+      top: 10%;
+      left: -100px;
+      z-index: -1;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 350px;
+      height: 350px;
+      background: rgba(14, 165, 233, 0.15);
+      filter: blur(100px);
+      border-radius: 50%;
+      right: -100px;
+      bottom: 10%;
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      padding: 25px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(15px);
+      background: rgba(0, 0, 0, 0.18);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .logo span {
+      color: #8b5cf6;
+    }
+
+    .games-count {
+      padding: 9px 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 70px 20px 45px;
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 8vw, 75px);
+      font-weight: 900;
+      background: linear-gradient(90deg, #a78bfa, #38bdf8, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      margin-top: 15px;
+      color: #b8c0d4;
+      font-size: 17px;
+    }
+
+    /* Search */
+    .search-box {
+      max-width: 650px;
+      margin: 25px auto 0;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 17px 22px;
+      border-radius: 15px;
+      outline: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.07);
+      color: white;
+      font-size: 16px;
+      backdrop-filter: blur(15px);
+    }
+
+    .search-box input::placeholder {
+      color: #8d96aa;
+    }
+
+    /* Games */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding-bottom: 70px;
+    }
+
+    .section-title {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
+    }
+
+    .game-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 250px;
+      border-radius: 22px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+
+      background:
+        linear-gradient(
+          to top,
+          rgba(0,0,0,0.9),
+          rgba(0,0,0,0.15)
+        ),
+        linear-gradient(135deg, #312e81, #0f172a);
+
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+
+      transition: 0.3s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(139,92,246,0.7);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .game-icon {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      font-size: 55px;
+    }
+
+    .game-card h3 {
+      font-size: 23px;
+      margin-bottom: 7px;
+    }
+
+    .game-card p {
+      color: #b7bfd0;
+      font-size: 14px;
+      margin-bottom: 17px;
+    }
+
+    .play-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #7c3aed, #2563eb);
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.03);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #8992a8;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #697286;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 18px 5%;
+      }
+
+      .hero {
+        padding-top: 50px;
+      }
+
+      .game-card {
+        min-height: 230px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🎮 Game<span>Hub</span></div>
+  <div class="games-count">
+    <span id="gameCount">0</span> Games
+  </div>
+</header>
+
+<section class="hero">
+
+  <h1>Game Hub</h1>
+
+  <p>
+    Play your favorite HTML games in one place.
+  </p>
+
+  <div class="search-box">
+    <input
+      type="text"
+      id="search"
+      placeholder="🔍 Search games..."
+      oninput="searchGames()"
+    >
+  </div>
+
+</section>
+
+<main class="container">
+
+  <h2 class="section-title">🔥 All Games</h2>
+
+  <div class="games-grid" id="gamesGrid">
+
+    <!--
+      ADD YOUR GAME FILES HERE
+    -->
+
+    <div
+      class="game-card"
+      data-name="Tic Tac Toe"
+    >
+
+      <div class="game-icon">⭕</div>
+
+      <h3>Tic Tac Toe</h3>
+
+      <p>
+        Play against a bot or another player.
+      </p>
+
+      <button
+        class="play-btn"
+        onclick="openGame('games/tic-tac-toe/index.html')"
+      >
+        ▶ Play
+      </button>
+
+    </div>
+
+
+    <div
+      class="game-card"
+      data-name="Snake"
+    >
+
+      <div class="game-icon">🐍</div>
+
+      <h3>Snake</h3>
+
+      <p>
+        Classic snake game.
+      </p>
+
+      <button
+        class="play-btn"
+        onclick="openGame('games/snake/index.html')"
+      >
+        ▶ Play
+      </button>
+
+    </div>
+
+
+    <div
+      class="game-card"
+      data-name="2048"
+    >
+
+      <div class="game-icon">🔢</div>
+
+      <h3>2048</h3>
+
+      <p>
+        Combine numbers and reach 2048.
+      </p>
+
+      <button
+        class="play-btn"
+        onclick="openGame('games/2048/index.html')"
+      >
+        ▶ Play
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="empty" id="empty">
+    No games found 😢
+  </div>
+
+</main>
+
+<footer>
+  🎮 GameHub • Made with HTML, CSS & JavaScript
+</footer>
+
+
+<script>
+
+  function openGame(game) {
+    window.location.href = game;
+  }
+
+
+  function searchGames() {
+
+    const search =
+      document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+    const cards =
+      document.querySelectorAll(".game-card");
+
+    let visible = 0;
+
+    cards.forEach(card => {
+
+      const name =
+        card
+          .getAttribute("data-name")
+          .toLowerCase();
+
+      if (name.includes(search)) {
+
+        card.style.display = "flex";
+        visible++;
+
+      } else {
+
+        card.style.display = "none";
+
+      }
+
+    });
+
+    document.getElementById("empty").style.display =
+      visible === 0 ? "block" : "none";
+  }
+
+
+  function updateGameCount() {
+
+    const cards =
+      document.querySelectorAll(".game-card");
+
+    document.getElementById("gameCount").textContent =
+      cards.length;
+
+  }
+
+
+  updateGameCount();
+
+</script>
+
+</body>
+      </html>
